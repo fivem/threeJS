@@ -158,7 +158,7 @@
 
 			setTimeout(function () { fm.dbRightClick =0,fm.dbLeftClick=0}, 200);
 			if(fm.dbLeftClick<2 && fm.dbRightClick<2){
-				return;
+				//return;
 			}
 			e.preventDefault();
 			fm.raycaster.setFromCamera(fm.mouse, fm.camera);
@@ -169,7 +169,7 @@
             if (intersects.length > 0) {
                 fm.controls.enabled = false;
                 var SELECTED = intersects[0].object;
-                //TODO SELECTED 是mesh对象 应该做交互的一些事情，这里还没想好怎么处理 2017-01-15 20:22
+                
 				//双击左键消失
 				if(fm.dbLeftClick>=2){
 					fm.scene.remove(SELECTED)
@@ -179,6 +179,18 @@
 							fm.undo.push(fm.objects[fi]);
 							fm.objects.splice(fi,1);
 						}
+					}
+				}else if(fm.dbLeftClick==1){
+					//左键单击事件。用户自定义扩展
+					//TODO SELECTED 是mesh对象 应该做交互的一些事情，这里还没想好怎么处理 2017-01-15 20:22
+					if(typeof(fm.leftClickMesh) == 'function'){
+							//需要自定义扩展leftClickMesh
+							fm.leftClickMesh(SELECTED.name);
+					}
+				}else if(fm.dbRightClick==1){
+					//右键单击事件，用户自定义扩展
+					if(typeof(fm.rightClickMesh) == 'function'){
+						fm.rightClickMesh(SELECTED.name);
 					}
 				}
 				console.log(SELECTED.name);
@@ -244,7 +256,6 @@
 						//立方体
 						case "cube": 
 						if(obj.map!= undefined && typeof(obj.map)!=='string'){
-							debugger;
 							var texture= new THREE.CanvasTexture( obj.map );
 							texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 							texture.repeat.set(1,1);
@@ -338,16 +349,6 @@
 			}
 			return tempArr;
 		},
-		extend:function(funcName,funcBody){
-			if(typeof(funcBody)!="function" ){
-				console.log("err in extend : target is not a function");
-				return;
-			}
-			if(fiveM.prototype[funcName]){
-				console.log("warning in extend : "+funcName+" has been defined");
-			}
-			fiveM.prototype[funcName] = funcBody;
-		},
 		//创建动态纹理
 		createPicture:function(textPicture){
 			var canvas2d = document.createElement("canvas");
@@ -365,7 +366,19 @@
 			context.fillText(textPicture.text,textPicture.x||300,textPicture.y||200);
 			//document.body.appendChild(canvas2d);
 			return canvas2d;
+		},
+		 
+		extend:function(funcName,funcBody){
+			if(typeof(funcBody)!="function" ){
+				console.log("err in extend : target is not a function");
+				return;
+			}
+			if(fiveM.prototype[funcName]){
+				console.log("warning in extend : "+funcName+" has been defined");
+			}
+			fiveM.prototype[funcName] = funcBody;
 		}
+		
 	};
 	  
  
