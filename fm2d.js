@@ -430,6 +430,25 @@ var fm = fiveM.prototype = {
 		//document.body.appendChild(canvas2d);
 		return canvas2d;
 	},
+	
+	/*ThreeBSP subtract 方法封装(挖洞) 
+	*针对于已经加入scene中的mesh操作
+	*参数 MinuendName:(被减数name) MeiosisName:(减数name) resultName:(结果name)
+	*/
+	subtract:function(MinuendName,MeiosisName,resultName){
+		var MinuendMesh = fm.scene.getChildByName(MinuendName);
+		var MeiosisMesh = fm.scene.getChildByName(MeiosisName);
+		debugger
+		var MinuendTemp = new ThreeBSP(MinuendMesh);
+		var MeiosisTemp = new ThreeBSP(MeiosisMesh);
+		var result = MinuendTemp.subtract(MeiosisTemp);
+		//继承 被减数 的 material
+		var resultMesh = result.toMesh(MinuendMesh.material);
+		resultMesh.name = resultName;
+		fm.scene.remove(MinuendMesh);
+		fm.scene.remove(MeiosisMesh);
+		fm.scene.add(resultMesh);
+	},
 	 
 	extend:function(funcName,funcBody){
 		if(typeof(funcBody)!="function" ){
