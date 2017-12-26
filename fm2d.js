@@ -445,8 +445,22 @@ var fm = fiveM.prototype = {
 		//继承 被减数 的 material
 		var resultMesh = result.toMesh(MinuendMesh.material);
 		resultMesh.name = resultName;
+		//清除objects中的对象
+		for(var fi=0;fi<fm.objects.length;fi++){
+			if(fm.objects[fi].name==MinuendMesh.name){
+				fm.objects.splice(fi,1);
+			}
+		}
 		fm.scene.remove(MinuendMesh);
+		
+		for(var fe=0;fe<fm.objects.length;fe++){
+			if(fm.objects[fe].name==MeiosisMesh.name){
+				fm.objects.splice(fe,1);
+			}
+		}
 		fm.scene.remove(MeiosisMesh);
+		
+		fm.objects.push(resultMesh);
 		fm.scene.add(resultMesh);
 	},
 	 
